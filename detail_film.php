@@ -25,9 +25,7 @@ if ($result->num_rows > 0) {
 
 <div class="film-detail-container">
     <div class="back-button">
-            <a href="list_film.php">
-                <button>&laquo; Back</button>
-            </a>
+            <button onclick="location.href='list_film.php'">&laquo; Back</button>
     </div>
     <div class="film-info">
         <h1><?php echo htmlspecialchars($row['title']); ?></h1>
@@ -37,6 +35,7 @@ if ($result->num_rows > 0) {
         <p><strong>Durasi:</strong> <?php echo htmlspecialchars($row['duration']); ?> menit</p>
         <p><strong>Sinopsis:</strong> <?php echo htmlspecialchars($row['synopsis']); ?></p>
         <p><strong>Pemeran:</strong> <?php echo htmlspecialchars($row['cast']); ?></p>
+        <p><strong>Review:</strong> <?php echo htmlspecialchars($row['review']); ?></p>
         <p><strong>Rating:</strong> 
             <?php echo htmlspecialchars($row['rating']); ?> 
             <span class="star">&#9733;</span>

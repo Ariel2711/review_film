@@ -2,6 +2,10 @@
 include 'header.php';
 include 'db.php';
 
+if (isset($_SESSION['username'])) {
+    header("Location: list_film.php");
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $username = $_POST['username'];

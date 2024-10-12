@@ -12,8 +12,10 @@ $result = $conn->query($sql);
 ?>
 
 <div class="film-container">
-    
-    <?php echo "<h3>Welcome, " . $_SESSION['username'] . "</h3>"; ?>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3><?php echo "Welcome, " . htmlspecialchars($_SESSION['username']); ?></h3>
+        <a href="create_film.php" class="create-film-button">Create Film</a>
+    </div>
     <h3>Daftar Film</h3>
     <div class="film-grid">
         <?php
@@ -28,6 +30,12 @@ $result = $conn->query($sql);
                 echo "<div class='film-rating'>";
                 echo "&#9733; " . $rating . "/10";
                 echo "</div>";
+                
+                echo "<div class='film-actions'>";
+                echo "<button class='edit-button' onclick=\"window.location.href='create_film.php?id_film=" . $row["id_film"] . "'\" title='Edit Film'>Edit</button>";
+                echo "<button class='delete-button' onclick=\"confirm('Are you sure you want to delete this film?') ? location.href='delete_film.php?id_film=" . $row['id_film'] . "' : ''\" title='Delete Film'>Delete</button>";
+                echo "</div>";
+                
                 echo "</div>";
             }
         } else {
