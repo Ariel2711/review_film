@@ -18,40 +18,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $review = $_POST['review'];
     $rating = $_POST['rating'];
     $trailer_url = $_POST['trailer_url'];
+    
+    $poster_image = null;
+    
+    if (isset($_FILES['uploadedfile']) && $_FILES['uploadedfile']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $target_path = "images/";
+        $target_path = $target_path . basename($_FILES['uploadedfile']['name']); 
 
-    $target_path = "images/";
-    $target_path = $target_path . basename($_FILES['uploadedfile']['name']); 
+        if ($_FILES['uploadedfile']['error'] !== UPLOAD_ERR_OK) {
+            echo "<script>alert('File upload error: " . $_FILES['uploadedfile']['error'] . "');</script>";
+            echo "<script>window.location.href = 'index.php';</script>";
+            exit();
+        }
 
-    if ($_FILES['uploadedfile']['error'] !== UPLOAD_ERR_OK) {
-        echo "<script>alert('File upload error: " . $_FILES['uploadedfile']['error'] . "');</script>";
-        echo "<script>window.location.href = 'index.php';</script>";
-        exit();
-    }
+        if (!move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) {
+            echo "<script>alert('There was an error uploading the file, please try again!');</script>";
+            echo "<script>window.location.href = 'index.php';</script>";
+            exit();
+        }
 
-    if (!move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) {
-        echo "<script>alert('There was an error uploading the file, please try again!');</script>";
-        echo "<script>window.location.href = 'index.php';</script>";
-        exit();
+        $poster_image = $target_path;
     }
 
     if (isset($_POST['film_id'])) {
         $film_id = $_POST['film_id'];
 
-        $sql = "UPDATE films SET title=?, director=?, release_year=?, genre=?, duration=?, synopsis=?, cast=?, review=?, rating=?, trailer_url=?, poster_image=? WHERE id_film=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssisisssissi", $title, $director, $release_year, $genre, $duration, $synopsis, $cast, $review, $rating, $trailer_url, $target_path, $film_id);
+        if ($poster_image) {
+            $sql = "UPDATE films SET title=?, director=?, release_year=?, genre=?, duration=?, synopsis=?, cast=?, review=?, rating=?, trailer_url=?, poster_image=? WHERE id_film=?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssisisssissi", $title, $director, $release_year, $genre, $duration, $synopsis, $cast, $review, $rating, $trailer_url, $poster_image, $film_id);
+        } else {
+            $sql = "UPDATE films SET title=?, director=?, release_year=?, genre=?, duration=?, synopsis=?, cast=?, review=?, rating=?, trailer_url=? WHERE id_film=?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssisisssisi", $title, $director, $release_year, $genre, $duration, $synopsis, $cast, $review, $rating, $trailer_url, $film_id);
+        }
 
         if ($stmt->execute()) {
             echo "<script>alert('Film updated successfully');</script>";
             echo "<script>window.location.href = 'index.php';</script>";
         } else {
-            echo "<script>alert('Error: " . $stmt->error . "')</script>";
+            echo "<script>alert('Error: " . $stmt->error . "');</script>";
             echo "<script>window.location.href = 'index.php';</script>";
         }
+
     } else {
         $sql = "INSERT INTO films (title, director, release_year, genre, duration, synopsis, cast, review, rating, trailer_url, poster_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssisisssiss", $title, $director, $release_year, $genre, $duration, $synopsis, $cast, $review, $rating, $trailer_url, $target_path);
+        $stmt->bind_param("ssisisssiss", $title, $director, $release_year, $genre, $duration, $synopsis, $cast, $review, $rating, $trailer_url, $poster_image);
 
         if ($stmt->execute()) {
             echo "<script>alert('Film created successfully');</script>";
