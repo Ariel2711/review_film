@@ -14,12 +14,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = $conn->prepare("INSERT INTO users (email, username, password) VALUES (?, ?, ?)");
     $sql->bind_param("sss",$email, $username, $password);
 
-    if ($sql->execute()) {
-        echo "<script>alert('Pendaftaran berhasil!');</script>";
-        echo "<script>window.location.href = 'login.php';</script>";
-    } else {
-        echo "<script>alert('Error: " . $sql->error . "');</script>";
+    try{
+        if ($sql->execute()) {
+            echo "<script>alert('Pendaftaran berhasil!');</script>";
+            echo "<script>window.location.href = 'login.php';</script>";
+        } else {
+            echo "<script>alert('Error: " . addslashes($sql->error) . "');</script>";
+        }
+    } catch (Exception $e){
+        echo "<script>alert('Error: " . addslashes($e->getMessage()) . "');</script>";
     }
+    
     
     $sql->close();
     $conn->close();

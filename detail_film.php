@@ -44,7 +44,6 @@ if ($result->num_rows > 0) {
         <?php if (!empty($row['trailer_url'])): ?>
             <p><strong>Trailer:</strong></p>
             <?php
-                // Ubah URL YouTube menjadi embed URL
                 function convertYouTubeUrlToEmbed($url) {
                     if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
                         return "https://www.youtube.com/embed/" . $matches[1];

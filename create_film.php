@@ -53,25 +53,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("ssisisssisi", $title, $director, $release_year, $genre, $duration, $synopsis, $cast, $review, $rating, $trailer_url, $film_id);
         }
 
-        if ($stmt->execute()) {
-            echo "<script>alert('Film updated successfully');</script>";
-            echo "<script>window.location.href = 'index.php';</script>";
-        } else {
-            echo "<script>alert('Error: " . $stmt->error . "');</script>";
-            echo "<script>window.location.href = 'index.php';</script>";
+        try{
+            if ($stmt->execute()) {
+                echo "<script>alert('Film updated successfully');</script>";
+                echo "<script>window.location.href = 'index.php';</script>";
+            } else {
+                echo "<script>alert('Error: " . addslashes($stmt->error) . "');</script>";
+                echo "<script>window.location.href = 'index.php';</script>";
+            }
+        }catch(Exception $e){
+            echo "<script>alert('Error: " . addslashes($e->getMessage()) . "');</script>";
         }
+        
 
     } else {
         $sql = "INSERT INTO films (title, director, release_year, genre, duration, synopsis, cast, review, rating, trailer_url, poster_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssisisssiss", $title, $director, $release_year, $genre, $duration, $synopsis, $cast, $review, $rating, $trailer_url, $poster_image);
 
-        if ($stmt->execute()) {
-            echo "<script>alert('Film created successfully');</script>";
-            echo "<script>window.location.href = 'index.php';</script>";
-        } else {
-            echo "<script>alert('Insert Error: " . $stmt->error . "');</script>";
-            echo "<script>window.location.href = 'index.php';</script>";
+        try{
+
+            if ($stmt->execute()) {
+                echo "<script>alert('Film created successfully');</script>";
+                echo "<script>window.location.href = 'index.php';</script>";
+            } else {
+                echo "<script>alert('Insert Error: " . addslashes($stmt->error) . "');</script>";
+                echo "<script>window.location.href = 'index.php';</script>";
+            }
+        }catch(Exception $e){
+            echo "<script>alert('Insert Error: " . addslashes($e->getMessage()) . "');</script>";
         }
     }
 
